@@ -5,6 +5,8 @@ const jwt = require('jsonwebtoken');
 exports.register = async (req, res) => {
     try {
         const { username, name , password, email, userType } = req.body;
+        console.log(userType)
+        console.log("Request Recived Register")
         // Check if user already exists
         const existingUser = await User.findOne({ where: { username:username } });
         if (existingUser) return res.status(400).json({ error: 'Username already taken' });
@@ -14,11 +16,12 @@ exports.register = async (req, res) => {
 
         // Create user
         const user = await User.create({
-            username,
-            name,
-            email,
-            password: hashedPassword,
-            userType
+            username:username,
+            name:name,
+            email:email,
+            role:"issuer",
+            password_hash: hashedPassword,
+            public_key: "dummyIssuerPublicKey"
         });
 
         res.status(201).json({ message: 'User registered successfully', user });
@@ -30,20 +33,28 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
     try {
-        console.log("Login Req reciecved")
+        console.log("Login request received");
 
         const { username, password } = req.body;
-        // Find user
-        const user = await User.findOne({ where: { email: username } });
+        console.log(username + password)
+        // Find user by username
+        const user = await User.findOne({ where: { username:username } });
         if (!user) return res.status(404).json({ error: 'User not found' });
-        // Compare passwords
-        const isMatch = await bcrypt.compare(password, user.password);
+
+        // Compare hashed password
+        const isMatch = await bcrypt.compare(password, user.password_hash);
         if (!isMatch) return res.status(400).json({ error: 'Invalid credentials' });
 
         // Generate JWT
-        // const token = jwt.sign({ userId: user.id, userType: user.userType }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        //userid token and type
-        res.json({ token, userType: user.userType });
+        const token = jwt.sign(
+            { userId: user.user_id, role: user.role },
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' }
+        );
+
+        // Send token and role
+        res.json({ token, role: user.role });
+
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: err.message });
