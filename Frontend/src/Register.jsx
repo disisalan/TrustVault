@@ -6,7 +6,7 @@ export default function Register() {
     name: "",
     password: "",
     email: "",
-    userType: "user", // Default value
+    userType: "reciever", // Default value
   });
 
   const handleChange = (e) => {
@@ -16,10 +16,9 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http:/http://localhost:5050/api/auth/register", {
+      const response = await fetch("http://localhost:5050/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        mode:no-cors,
         body: JSON.stringify(formData),
       });
       const data = await response.json();
@@ -43,9 +42,9 @@ export default function Register() {
         <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} required className="w-full p-2 border mb-2" />
         <input type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange} required className="w-full p-2 border mb-2" />
         <select name="userType" value={formData.userType} onChange={handleChange} className="w-full p-2 border mb-4">
-          <option value="user">Issuer</option>
-          <option value="admin">Receiver</option>
-          <option value="admin">Verifier</option>
+          <option value="issuer">Issuer</option>
+          <option value="verifier">Receiver</option>
+          <option value="receiver">Verifier</option>
         </select>
         <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded">Register</button>
       </form>
