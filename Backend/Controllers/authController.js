@@ -1,11 +1,12 @@
 const User = require('../Models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const generateKeyPair=require('../Config/generateKey')
+const {encryptPrivateKey: enc}=require('../Config/keyHandler')
 
 exports.register = async (req, res) => {
     try {
         const { username, name , password, email, userType } = req.body;
-        console.log(userType)
         console.log("Request Recived Register")
         // Check if user already exists
         const existingUser = await User.findOne({ where: { username:username } });
@@ -13,15 +14,18 @@ exports.register = async (req, res) => {
 
         // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
+        // Create public private key
+        const { publicKey, privateKey } = await generateKeyPair();
+        const enc_privatekey=await enc(privateKey)
 
-        // Create user
         const user = await User.create({
             username:username,
             name:name,
             email:email,
-            role:"issuer",
+            role:userType,
             password_hash: hashedPassword,
-            public_key: "dummyIssuerPublicKey"
+            public_key: publicKey,
+            private_key:enc_privatekey
         });
 
         res.status(201).json({ message: 'User registered successfully', user });
@@ -40,16 +44,17 @@ exports.login = async (req, res) => {
         // Find user by username
         const user = await User.findOne({ where: { username:username } });
         if (!user) return res.status(404).json({ error: 'User not found' });
-
+        console.log(user)
         // Compare hashed password
         const isMatch = await bcrypt.compare(password, user.password_hash);
+        
         if (!isMatch) return res.status(400).json({ error: 'Invalid credentials' });
 
         // Generate JWT
         const token = jwt.sign(
             { userId: user.user_id, role: user.role },
             process.env.JWT_SECRET,
-            { expiresIn: '1h' }
+            { expiresIn: '1h' } 
         );
 
         // Send token and role

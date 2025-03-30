@@ -31,6 +31,9 @@ const User = sequelize.define('User', {
   public_key: {
     type: DataTypes.TEXT,
     allowNull: true
+  },
+  private_key:{
+    type:DataTypes.TEXT,
   }
 }, {
   timestamps: true,
