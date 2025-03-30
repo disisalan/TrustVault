@@ -12,7 +12,7 @@ app.use(cors());
 connectDB()
 
 app.use('/api/auth', authRoutes);
-app.use('api/',userRoutes);
+app.use('/api',userRoutes);
 
 app.listen(5050,()=>{
     console.log("Server running at 5050 port")

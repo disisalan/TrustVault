@@ -1,8 +1,9 @@
 
 const User = require('../Models/User'); // Adjust the path and model name as needed
+const Document = require('../Models/Document'); // Adjust the path and model name as needed
 
 // Dashboard controller: fetches the user by id from the token and returns dashboard data
-exports.dashboard = async (req, res) => {
+exports.profile = async (req, res) => {
   try {
     const userId = req.user.userId || req.user.id;
     
@@ -15,13 +16,15 @@ exports.dashboard = async (req, res) => {
     
     // Send a response with dashboard info (customize as needed)
     res.json({
-      message: `Welcome to your dashboard, ${userData.username}`,
+      message: `Welcome to your Profile , ${userData.username}`,
       user: {
         id: userData.id,
         username: userData.username,
+        userId:userData.user_id,
+        name:userData.name,
         email: userData.email,
         role: userData.role,
-        // include any other dashboard-specific data here
+        public_key:userData.public_key        // include any other dashboard-specific data here
       }
     });
   } catch (error) {
@@ -31,30 +34,21 @@ exports.dashboard = async (req, res) => {
 };
 
 // Profile controller: fetches the user profile based on the token's id
-exports.profile = async (req, res) => {
+exports.dashboard = async (req, res) => {
   try {
-    // Extract the user id from the token (assuming it was set by your auth middleware)
-    const userId = req.user.userId || req.user.id;
-    
-    // Fetch the user profile from the database
-    const userData = await User.findByPk(userId);
-    
-    if (!userData) {
-      return res.status(404).json({ error: 'User not found' });
+    const userId = req.user.userId || req.user.id; // Extract user ID from token
+
+    if (!userId) {
+      return res.status(400).json({ error: 'User ID is missing' });
     }
-    
-    // Send a response with the profile data (customize as needed)
-    res.json({
-      profile: {
-        id: userData.id,
-        username: userData.username,
-        email: userData.email,
-        role: userData.role,
-        // include additional profile fields here
-      }
+
+    const documents = await Document.findAll({
+      where: { receiver_id: userId }
     });
+
+    res.json({message:"User Documents Found",documents});
   } catch (error) {
-    console.error('Profile error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error('Error fetching documents:', error);
+    res.status(500).json({ error: 'Database query failed' });
   }
 };
