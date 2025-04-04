@@ -40,11 +40,9 @@ exports.login = async (req, res) => {
         console.log("Login request received");
 
         const { username, password } = req.body;
-        console.log(username + password)
         // Find user by username
         const user = await User.findOne({ where: { username:username } });
         if (!user) return res.status(404).json({ error: 'User not found' });
-        console.log(user)
         // Compare hashed password
         const isMatch = await bcrypt.compare(password, user.password_hash);
         

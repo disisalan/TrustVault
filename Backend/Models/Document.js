@@ -35,6 +35,11 @@ const Document = sequelize.define('Document', {
     type: DataTypes.JSONB,
     allowNull: true
   },
+  status: {
+    type: DataTypes.ENUM('pending', 'transacted', 'completed'), // Alternatively, use DataTypes.ENUM('pending', 'transacted', 'completed') if you have fixed statuses
+    allowNull: false,
+    defaultValue: 'pending' // Default status can be set to 'pending'
+  },
   storage_uri: {
     type: DataTypes.STRING,
     allowNull: true
