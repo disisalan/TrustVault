@@ -1,6 +1,7 @@
 const User = require('../Models/User'); // Adjust the path and model name as needed
 const Document = require('../Models/Document'); // Adjust the path and model name as needed
-
+const sequelize=require("sequelize")
+const Transaction=require('../Models/Transaction')
 exports.profile = async (req, res) => {
     try {
       const userId = req.user.userId || req.user.id;
@@ -71,6 +72,7 @@ exports.uploadDocument = async (req, res) => {
         issuer_id: issuerData.user_id, // Note: database column is user_id in User model
         receiver_id:receiver_id,
         metadata: metadata ? JSON.parse(metadata) : null,
+        status:"In progress",
         storage_uri
       });
       
@@ -81,5 +83,51 @@ exports.uploadDocument = async (req, res) => {
     } catch (error) {
       console.error('Upload Error:', error);
       res.status(500).json({ error: 'Internal server error' });
+    }
+  };
+
+  exports.v_doc = async (req, res) => {
+    const { document_ids } = req.body;
+  
+    // Validate the request: must be a non-empty array of document IDs.
+    if (!Array.isArray(document_ids) || document_ids.length === 0) {
+      return res.status(400).json({ error: 'Invalid or empty document_ids array.' });
+    }
+  
+    try {
+      for (const docId of document_ids) {
+        // Find the document by its primary key.
+        const document = await Document.findByPk(docId);
+  
+        if (!document) {
+          return res.status(404).json({ error: `Document with ID ${docId} not found.` });
+        }
+  
+        // Check if the document's status is already "completed"
+        if (document.status === 'completed') {
+          // Skip processing this document.
+          continue;
+        }
+  
+        // Generate the composite hash and signed hash using placeholder functions.
+        // const compositeHash = generateCompositeHash(document);
+        // const signedHash = signHash(compositeHash);
+  
+        // Create a transaction record for the document.
+        await Transaction.create({
+          document_id: docId,
+          composite_hash: "compositeHash",
+          signed_hash: "signedHash",
+          status: 'pending',  // This is the initial status for the transaction.
+        });
+  
+        // Update the document's status to "completed"
+        await document.update({ status: 'completed' });
+      }
+  
+      res.status(200).json({ message: 'Documents verified and transactions recorded successfully.' });
+    } catch (error) {
+      console.error('Error in v_doc:', error);
+      res.status(500).json({ error: 'Internal server error.' });
     }
   };
