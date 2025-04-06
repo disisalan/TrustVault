@@ -1,7 +1,9 @@
 const User = require('../Models/User'); // Adjust the path and model name as needed
 const Document = require('../Models/Document'); // Adjust the path and model name as needed
-const sequelize=require("sequelize")
 const Transaction=require('../Models/Transaction')
+
+const { generateCompositeHash, hashOnBlockchain } = require('../Middleware/blockchain');
+
 exports.profile = async (req, res) => {
     try {
       const userId = req.user.userId || req.user.id;
@@ -86,7 +88,7 @@ exports.uploadDocument = async (req, res) => {
     }
   };
 
-  exports.v_doc = async (req, res) => {
+exports.v_doc = async (req, res) => {
     const { document_ids } = req.body;
   
     // Validate the request: must be a non-empty array of document IDs.
@@ -110,13 +112,15 @@ exports.uploadDocument = async (req, res) => {
         }
   
         // Generate the composite hash and signed hash using placeholder functions.
-        // const compositeHash = generateCompositeHash(document);
-        // const signedHash = signHash(compositeHash);
+        const compositeHash = generateCompositeHash(document);
+        const { txnHash, blockHash } = await hashOnBlockchain(compositeHash);
   
         // Create a transaction record for the document.
         await Transaction.create({
           document_id: docId,
-          composite_hash: "compositeHash",
+          composite_hash: compositeHash,
+          block_hash:blockHash,
+          blockchain_tx_id:txnHash,
           signed_hash: "signedHash",
           status: 'pending',  // This is the initial status for the transaction.
         });

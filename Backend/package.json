@@ -10,16 +10,24 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "18": "^0.0.0",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "dotenv": "^16.4.7",
+    "ethers": "^6.13.5",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.2",
     "nodemon": "^3.1.9",
     "pg": "^8.14.1",
-    "sequelize": "^6.37.7"
+    "sequelize": "^6.37.7",
+    "truffle": "^5.11.5",
+    "web3": "^4.16.0"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "hardhat": "^2.22.19"
   }
 }
