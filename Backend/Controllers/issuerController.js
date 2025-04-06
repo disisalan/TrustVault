@@ -2,7 +2,7 @@ const User = require('../Models/User'); // Adjust the path and model name as nee
 const Document = require('../Models/Document'); // Adjust the path and model name as needed
 const Transaction=require('../Models/Transaction')
 
-const { generateCompositeHash, hashOnBlockchain } = require('../Middleware/blockchain');
+// const { generateCompositeHash, hashOnBlockchain } = require('../Middleware/blockchain');
 
 exports.profile = async (req, res) => {
     try {
@@ -112,15 +112,15 @@ exports.v_doc = async (req, res) => {
         }
   
         // Generate the composite hash and signed hash using placeholder functions.
-        const compositeHash = generateCompositeHash(document);
-        const { txnHash, blockHash } = await hashOnBlockchain(compositeHash);
+        // const compositeHash = generateCompositeHash(document);
+        // const { txnHash, blockHash } = await hashOnBlockchain(compositeHash);
   
         // Create a transaction record for the document.
         await Transaction.create({
           document_id: docId,
-          composite_hash: compositeHash,
-          block_hash:blockHash,
-          blockchain_tx_id:txnHash,
+          composite_hash: 'compositeHash',
+          block_hash:'blockHash',
+          blockchain_tx_id:'txnHash',
           signed_hash: "signedHash",
           status: 'pending',  // This is the initial status for the transaction.
         });
@@ -133,5 +133,19 @@ exports.v_doc = async (req, res) => {
     } catch (error) {
       console.error('Error in v_doc:', error);
       res.status(500).json({ error: 'Internal server error.' });
+    }
+  };
+
+
+  exports.docs = async (req, res) => {
+    try {
+      // Fetch all documents from the Document table
+      const allDocuments = await Document.findAll();
+  
+      // Respond with the documents
+      res.status(200).json({ documents: allDocuments });
+    } catch (error) {
+      console.error('Error fetching bulk documents:', error);
+      res.status(500).json({ error: 'Internal server error' });
     }
   };

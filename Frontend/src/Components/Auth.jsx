@@ -51,15 +51,15 @@ export default function Auth({ type }) {
                 localStorage.setItem("role", data.role);
                 localStorage.setItem("username", fields.username);
                 if(data.role === "receiver") {
-                    navigate("/dashboard")
+                    navigate("/receiver/dashboard")
                 }
 
                 if(data.role === "issuer") {
-                    navigate("/dashboard")
+                    navigate("/issuer/dashboard")
                 }
 
                 if(data.role === "verifier") {
-                    navigate("/dashboard")
+                    navigate("/verifier/dashboard")
                 }
 
                 // navigate(`/${data.role}`); // Redirect based on role
