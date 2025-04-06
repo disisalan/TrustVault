@@ -49,19 +49,20 @@ export default function Auth({ type }) {
             if (response.ok) {
                 localStorage.setItem("token", data.token);
                 localStorage.setItem("role", data.role);
+                localStorage.setItem("username", fields.username);
                 if(data.role === "receiver") {
-                    navigate("/receiver")
+                    navigate("/dashboard")
                 }
 
                 if(data.role === "issuer") {
-                    navigate("/issuer")
+                    navigate("/dashboard")
                 }
 
                 if(data.role === "verifier") {
-                    navigate("/verifier")
+                    navigate("/dashboard")
                 }
 
-                navigate(`/${data.role}`); // Redirect based on role
+                // navigate(`/${data.role}`); // Redirect based on role
             } else {
                 setError(data.message || "Invalid credentials. Please try again.");
             }
