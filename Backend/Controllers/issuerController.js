@@ -2,7 +2,7 @@ const User = require('../Models/User'); // Adjust the path and model name as nee
 const Document = require('../Models/Document'); // Adjust the path and model name as needed
 const Transaction=require('../Models/Transaction')
 
-// const { generateCompositeHash, hashOnBlockchain } = require('../Middleware/blockchain');
+const { generateCompositeHash, hashOnBlockchain } = require('../Middleware/blockchain');
 
 exports.profile = async (req, res) => {
     try {
@@ -112,8 +112,8 @@ exports.v_doc = async (req, res) => {
         }
   
         // Generate the composite hash and signed hash using placeholder functions.
-        // const compositeHash = generateCompositeHash(document);
-        // const { txnHash, blockHash } = await hashOnBlockchain(compositeHash);
+        const compositeHash = generateCompositeHash(document);
+        const { txnHash, blockHash } = await hashOnBlockchain(compositeHash);
   
         // Create a transaction record for the document.
         await Transaction.create({
