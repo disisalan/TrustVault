@@ -26,9 +26,6 @@ In traditional systems, verifying whether a certificate or document is legitimat
 `Node.js`, `Express.js`, `Sequelize ORM`, `PostgreSQL`, `Ethers.js`, `Hardhat`, `Solidity`  
 
 ---
-Sure bro, here’s a clean **Setup** section for your README to help anyone clone and run the project locally:
-
----
 
 ## 🛠️ Setup Instructions
 
@@ -87,8 +84,6 @@ npm run dev
 > The frontend will be available at `http://localhost:5173` 
 
 > You should see the API running at `http://localhost:5050`
-
-Absolutely! Here's a clean **📸 Screenshots** section you can drop into your README:
 
 ---
 
